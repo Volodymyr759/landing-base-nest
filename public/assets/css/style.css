@@ -1506,6 +1506,17 @@ section {
 	width: 100%;
 }
 
+.form-error-message {
+	padding: 15px;
+
+	text-align: left;
+
+	color: #FFF;
+	background: #ED3C0D;
+
+	font-weight: 600;
+}
+
 .contact .php-email-form .error-message {
 	display: none;
 

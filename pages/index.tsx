@@ -1,6 +1,50 @@
 import Head from 'next/head';
+import { ChangeEvent, useState } from 'react';
+import { SendMessageForm } from '../components/send-message-form/send-message';
+import { NotificationType } from '../infrastructure/enums/notification-types.enum';
+import { IEmailObject } from '../infrastructure/interfaces/email-object.interface';
+import { createNotification } from '../infrastructure/notification';
 
 export default function Home(): JSX.Element {
+  const [subscriptionEmail, setSubscriptionEmail] = useState('');
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSubscriptionEmail(event.target.value);
+  };
+
+  const subscriptionHandler = async () => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!re.test(String(subscriptionEmail).toLowerCase())) {
+      createNotification('Email is not valid.', NotificationType.Error);
+      return;
+    }
+    try {
+      const email: IEmailObject = {
+        to: subscriptionEmail,
+        subject: 'Your subscription has been confirmed.',
+        text: '',
+        html: `<div>Congrats! You are successfully subscribed.</div>`
+      };
+      fetch('/api/mailer', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ emailObject: email })
+      }).then((res) => {
+        if (!res.ok) {
+          createNotification('Error of sending email.', NotificationType.Error);
+          throw new Error('Error of sending email.');
+        }
+      });
+      createNotification('Email confirmation of subscription has sent.', NotificationType.Info);
+    } catch (e) {
+      createNotification('So sorry, sending email failed.', NotificationType.Error);
+      console.log(e);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -121,28 +165,28 @@ export default function Home(): JSX.Element {
                   <div className="progress">
                     <span className="skill">HTML <i className="val">100%</i></span>
                     <div className="progress-bar-wrap">
-                      <div className="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0"
-                        aria-valuemax="100"></div>
+                      <div className="progress-bar" role="progressbar" aria-valuenow={100} aria-valuemin={0}
+                        aria-valuemax={100}></div>
                     </div>
                   </div>
                   <div className="progress">
                     <span className="skill">CSS <i className="val">90%</i></span>
                     <div className="progress-bar-wrap">
-                      <div className="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
+                      <div className="progress-bar" role="progressbar" aria-valuenow={90} aria-valuemin={0} aria-valuemax={100}>
                       </div>
                     </div>
                   </div>
                   <div className="progress">
                     <span className="skill">JavaScript <i className="val">75%</i></span>
                     <div className="progress-bar-wrap">
-                      <div className="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                      <div className="progress-bar" role="progressbar" aria-valuenow={75} aria-valuemin={0} aria-valuemax={100}>
                       </div>
                     </div>
                   </div>
                   <div className="progress">
                     <span className="skill">Photoshop <i className="val">55%</i></span>
                     <div className="progress-bar-wrap">
-                      <div className="progress-bar" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100">
+                      <div className="progress-bar" role="progressbar" aria-valuenow={55} aria-valuemin={0} aria-valuemax={100}>
                       </div>
                     </div>
                   </div>
@@ -604,34 +648,9 @@ export default function Home(): JSX.Element {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-6 d-flex align-items-stretch contact-form-wrap">
-                <form action="forms/contact.php" method="post" role="form" className="php-email-form">
-                  <div className="row">
-                    <div className="col-md-6 form-group">
-                      <label htmlFor="name">Your Name</label>
-                      <input type="text" name="name" className="form-control" id="name" placeholder="Your Name" required />
-                    </div>
-                    <div className="col-md-6 form-group mt-3 mt-md-0">
-                      <label htmlFor="email">Your Email</label>
-                      <input type="email" className="form-control" name="email" id="email" placeholder="Your Email" required />
-                    </div>
-                  </div>
-                  <div className="form-group mt-3">
-                    <label htmlFor="subject">Subject</label>
-                    <input type="text" className="form-control" name="subject" id="subject" placeholder="Subject" required />
-                  </div>
-                  <div className="form-group mt-3">
-                    <label htmlFor="message">Message</label>
-                    <textarea className="form-control" name="message" rows={8} required></textarea>
-                  </div>
-                  <div className="my-3">
-                    <div className="loading">Loading</div>
-                    <div className="error-message"></div>
-                    <div className="sent-message">Your message has been sent. Thank you!</div>
-                  </div>
-                  <div className="text-center"><button type="submit">Send Message</button></div>
-                </form>
-              </div>
+
+              <SendMessageForm />
+
             </div>
           </div>
         </section>
@@ -680,7 +699,14 @@ export default function Home(): JSX.Element {
                 <h4>Our Newsletter</h4>
                 <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
                 <form action="" method="post">
-                  <input type="email" name="email" /><input type="submit" value="Subscribe" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={subscriptionEmail}
+                    onChange={handleChange}
+                  />
+                  <input type="submit" value="Subscribe" onClick={subscriptionHandler} />
+
                 </form>
               </div>
             </div>
@@ -702,11 +728,10 @@ export default function Home(): JSX.Element {
       <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
       <script src="/assets/vendor/glightbox/js/glightbox.min.js"></script>
       <script src="/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-      <script src="/assets/vendor/php-email-form/validate.js"></script>
       <script src="/assets/vendor/purecounter/purecounter.js"></script>
       <script src="/assets/vendor/swiper/swiper-bundle.min.js"></script>
       <script src="/assets/vendor/waypoints/noframework.waypoints.js"></script>
       <script src="/assets/js/main.js"></script>
     </>
-  )
+  );
 }
