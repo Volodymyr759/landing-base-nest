@@ -13,32 +13,34 @@ export default function Home(): JSX.Element {
   };
 
   const subscriptionHandler = async () => {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!re.test(String(subscriptionEmail).toLowerCase())) {
-      createNotification('Email is not valid.', NotificationType.Error);
-      return;
-    }
     try {
-      const email: IEmailObject = {
-        to: subscriptionEmail,
-        subject: 'Your subscription has been confirmed.',
-        text: '',
-        html: `<div>Congrats! You are successfully subscribed.</div>`
-      };
-      fetch('/api/mailer', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json, text/plain, */*',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ emailObject: email })
-      }).then((res) => {
-        if (!res.ok) {
-          createNotification('Error of sending email.', NotificationType.Error);
-          throw new Error('Error of sending email.');
+      if (subscriptionEmail.trim().length > 0) {
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!re.test(String(subscriptionEmail).toLowerCase())) {
+          createNotification('Email is not valid.', NotificationType.Error);
+          throw new Error('Email is not valid.');
         }
-      });
-      createNotification('Email confirmation of subscription has sent.', NotificationType.Info);
+        const email: IEmailObject = {
+          to: subscriptionEmail,
+          subject: 'Your subscription has been confirmed.',
+          text: '',
+          html: `<div>Congrats! You are successfully subscribed.</div>`
+        };
+        fetch('/api/mailer', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ emailObject: email })
+        }).then((res) => {
+          if (!res.ok) {
+            createNotification('Error of sending email.', NotificationType.Error);
+            throw new Error('Error of sending email.');
+          }
+        });
+        createNotification('Email confirmation of subscription has sent.', NotificationType.Info);
+      }
     } catch (e) {
       createNotification('So sorry, sending email failed.', NotificationType.Error);
       console.log(e);
@@ -698,6 +700,7 @@ export default function Home(): JSX.Element {
               <div className="col-lg-4 col-md-6 footer-newsletter">
                 <h4>Our Newsletter</h4>
                 <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
+
                 <form action="" method="post">
                   <input
                     type="email"
@@ -706,8 +709,8 @@ export default function Home(): JSX.Element {
                     onChange={handleChange}
                   />
                   <input type="submit" value="Subscribe" onClick={subscriptionHandler} />
-
                 </form>
+
               </div>
             </div>
           </div>
