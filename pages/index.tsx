@@ -701,15 +701,18 @@ export default function Home(): JSX.Element {
                 <h4>Our Newsletter</h4>
                 <p>Tamen quem nulla quae legam multos aute sint culpa legam noster magna</p>
 
-                <form action="" method="post">
+                <div style={{ position: 'relative', marginTop: '30px', padding: '6px 10px', background: '#FFF' }}>
                   <input
                     type="email"
                     name="email"
                     value={subscriptionEmail}
                     onChange={handleChange}
                   />
-                  <input type="submit" value="Subscribe" onClick={subscriptionHandler} />
-                </form>
+                  <button
+                    style={{ background: '#158F7C', position: 'absolute', top: '0', right: '0', bottom: '0', padding: '0 20px', transition: '0.3s', color: '#FFF', border: '0', fontSize: '16px', cursor: 'pointer' }}
+                    onClick={subscriptionHandler}>Subscribe
+                  </button>
+                </div>
 
               </div>
             </div>
