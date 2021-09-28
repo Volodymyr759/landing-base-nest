@@ -7,7 +7,7 @@ import { IEmailObject } from '../../infrastructure/interfaces/email-object.inter
 import { NotificationType } from '../../infrastructure/enums/notification-types.enum';
 
 export const SendMessageForm = (): JSX.Element => {
-	const submitHandler = async (message: IMessage) => {
+	const submitHandler = (message: IMessage) => {
 		try {
 			if (message && message.email.trim().length > 0) {
 				const email: IEmailObject = {
@@ -16,7 +16,7 @@ export const SendMessageForm = (): JSX.Element => {
 					text: '',
 					html: `<div>Thanks for your message, our manager will replay soon.</div>`
 				};
-				await fetch('/api/mailer', {
+				fetch('/api/mailer', {
 					method: 'POST',
 					headers: {
 						'Accept': 'application/json, text/plain, */*',
