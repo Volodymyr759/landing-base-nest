@@ -17,8 +17,8 @@ export default function Home(): JSX.Element {
       if (subscriptionEmail.trim().length > 0) {
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (!re.test(String(subscriptionEmail).toLowerCase())) {
-          createNotification('Email is not valid.', NotificationType.Error);
-          throw new Error('Email is not valid.');
+          createNotification('Email for subscription is not valid.', NotificationType.Error);
+          throw new Error('Email for subscription is not valid.');
         }
         const email: IEmailObject = {
           to: subscriptionEmail,
@@ -36,13 +36,13 @@ export default function Home(): JSX.Element {
         }).then((res) => {
           if (!res.ok) {
             createNotification('Error of sending email.', NotificationType.Error);
-            throw new Error('Error of sending email.');
+            throw new Error('Error of sending subscription email.');
           }
         });
         createNotification('Email confirmation of subscription has sent.', NotificationType.Info);
       }
     } catch (e) {
-      createNotification('So sorry, sending email failed.', NotificationType.Error);
+      createNotification('So sorry, sending subscription email failed.', NotificationType.Error);
       console.log(e);
     }
   };
