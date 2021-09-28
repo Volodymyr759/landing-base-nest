@@ -7,28 +7,30 @@ import { IEmailObject } from '../../infrastructure/interfaces/email-object.inter
 import { NotificationType } from '../../infrastructure/enums/notification-types.enum';
 
 export const SendMessageForm = (): JSX.Element => {
-	const submitHandler = (message: IMessage) => {
+	const submitHandler = async (message: IMessage) => {
 		try {
-			const email: IEmailObject = {
-				to: message.email,
-				subject: 'Re: ' + message.subject,
-				text: '',
-				html: `<div>Thanks for your message, our manager will replay soon.</div>`
-			};
-			fetch('/api/mailer', {
-				method: 'POST',
-				headers: {
-					'Accept': 'application/json, text/plain, */*',
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ emailObject: email })
-			}).then((res) => {
-				if (!res.ok) {
-					createNotification('Error of sending email.', NotificationType.Error);
-					throw new Error('Error of sending email.');
-				}
-			});
-			createNotification('Email confirmation has sent.', NotificationType.Info);
+			if (message && message.email.trim().length > 0) {
+				const email: IEmailObject = {
+					to: message.email,
+					subject: 'Re: ' + message.subject,
+					text: '',
+					html: `<div>Thanks for your message, our manager will replay soon.</div>`
+				};
+				await fetch('/api/mailer', {
+					method: 'POST',
+					headers: {
+						'Accept': 'application/json, text/plain, */*',
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ emailObject: email })
+				}).then((res) => {
+					if (!res.ok) {
+						createNotification('Error of sending email.', NotificationType.Error);
+						throw new Error('Error of sending email.');
+					}
+				});
+				createNotification('Email confirmation has sent.', NotificationType.Info);
+			}
 		} catch (e) {
 			createNotification('So sorry, sending email failed.', NotificationType.Error);
 			console.log(e);
