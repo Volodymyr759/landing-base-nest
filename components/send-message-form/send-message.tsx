@@ -7,7 +7,7 @@ import { IEmailObject } from '../../infrastructure/interfaces/email-object.inter
 import { NotificationType } from '../../infrastructure/enums/notification-types.enum';
 
 export const SendMessageForm = (): JSX.Element => {
-	const submitHandler = async (message: IMessage): Promise<void> => {
+	const submitHandler = (message: IMessage) => {
 		try {
 			const email: IEmailObject = {
 				to: message.email,
@@ -57,8 +57,8 @@ export const SendMessageForm = (): JSX.Element => {
 						email: Yup.string()
 							.required('Required')
 							.email('Invalid email')
-							.min(4, 'Email address must be 4-30 characters')
-							.max(30, 'Email address must be 4-30 characters'),
+							.min(4, 'Email address must be 4-50 characters')
+							.max(50, 'Email address must be 4-50 characters'),
 						messageText: Yup.string()
 							.required('Required')
 							.min(10, 'Message text must be 10-500 characters')
