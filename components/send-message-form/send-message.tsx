@@ -7,7 +7,7 @@ import { IEmailObject } from '../../infrastructure/interfaces/email-object.inter
 import { NotificationType } from '../../infrastructure/enums/notification-types.enum';
 
 export const SendMessageForm = (): JSX.Element => {
-	const submitHandler = (message: IMessage) => {
+	const submitHandler = async (message: IMessage) => {
 		try {
 			const email: IEmailObject = {
 				to: message.email,
@@ -24,11 +24,10 @@ export const SendMessageForm = (): JSX.Element => {
 				body: JSON.stringify({ emailObject: email })
 			}).then((res) => {
 				if (!res.ok) {
-					createNotification('Error of sending email.', NotificationType.Error);
 					throw new Error('Error of sending email.');
 				}
 			});
-			createNotification('Email confirmation has sent.', NotificationType.Info);
+			createNotification('Email confirmation has sent.', NotificationType.Success);
 		} catch (e) {
 			createNotification('So sorry, sending email failed.', NotificationType.Error);
 			console.log(e);
