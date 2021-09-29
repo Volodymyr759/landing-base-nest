@@ -35,7 +35,6 @@ export default function Home(): JSX.Element {
           body: JSON.stringify({ emailObject: email })
         }).then((res) => {
           if (!res.ok) {
-            createNotification('Error of sending email.', NotificationType.Error);
             throw new Error('Error of sending subscription email.');
           }
         });
@@ -705,6 +704,7 @@ export default function Home(): JSX.Element {
                   <input
                     type="email"
                     name="email"
+                    style={{ border: 'none' }}
                     value={subscriptionEmail}
                     onChange={handleChange}
                   />
