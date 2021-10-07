@@ -656,6 +656,8 @@ export default function Home(): JSX.Element {
           </div>
         </section>
       </main>
+
+      
       <footer id="footer">
         <div className="footer-top">
           <div className="container">
@@ -710,7 +712,8 @@ export default function Home(): JSX.Element {
                   />
                   <button
                     style={{ background: '#158F7C', position: 'absolute', top: '0', right: '0', bottom: '0', padding: '0 20px', transition: '0.3s', color: '#FFF', border: '0', fontSize: '16px', cursor: 'pointer' }}
-                    onClick={subscriptionHandler}>Subscribe
+                    onClick={subscriptionHandler}>
+                      Subscribe
                   </button>
                 </div>
 
